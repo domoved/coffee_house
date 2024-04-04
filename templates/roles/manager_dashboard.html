@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менеджер</title>
+</head>
+<body>
+    <h1>Добро пожаловать, менеджер!</h1>
+    <p>Доступный курс для тебя:</p> 
+    <ul>
+        {% for course in courses %}
+            <li>{{ course.title }}</li>
+            <h2>Доступные лекции:</h2>
+            <ul>
+                {% for lecture in lectures %}
+                    <li>{{ lecture.title }}</li>
+                {% empty %}
+                    <li>Нет доступных лекций</li>
+                {% endfor %}
+            </ul>
+                
+            <h2>Доступные тесты:</h2>
+            <ul>
+                {% for test in tests %}
+                    <li>{{ test.title }}</li>
+                {% empty %}
+                    <li>Нет доступных тестов</li>
+                {% endfor %}
+            </ul>
+        {% empty %}
+            <li>В настоящее время нет доступных курсов...</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Информация о прогрессе обучения:</h2>
+    <!-- прогресс обучения-->
+
+    <a href="/profile">Мой профиль</a>
+</body>
+</html>

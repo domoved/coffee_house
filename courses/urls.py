@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+from .views import course_list
 
 urlpatterns = [
     path('', views.course_list, name='course_list'),

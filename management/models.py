@@ -18,11 +18,17 @@ class Document(models.Model):
     document_type = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.title
+
 
 class CourseMaterial(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     content = models.TextField()
     material_link = models.URLField()
+
+    def __str__(self):
+        return self.course
 
 
 class CertificationProcess(models.Model):
@@ -31,6 +37,9 @@ class CertificationProcess(models.Model):
     certification_result = models.CharField(max_length=100)
     certification_date = models.DateTimeField()
 
+    def __str__(self):
+        return self.certification_result
+
 
 class Grade(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -38,4 +47,4 @@ class Grade(models.Model):
     grade = models.IntegerField()
 
     def __str__(self):
-        return self.name
+        return self.grade
