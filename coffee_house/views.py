@@ -24,7 +24,7 @@ def login_view(request):
             login(request, user)
             return redirect('home')
         else:
-            return render(request, 'login.html', {'error_message': 'Неверное имя или пароль'})
+            return render(request, 'login.html', {'error': 'Неверное имя или пароль'})
     else:
         return render(request, 'login.html')
 

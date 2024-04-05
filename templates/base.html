@@ -8,11 +8,6 @@
 </head>
 <body>
     {% include 'header.html' %}
-    {% block error_messages %}
-        {% if field.errors %}
-         <small class="text-danger">Поле обязательно для заполнения</small>
-        {% endif %}
-    {% endblock %}
 
     <div class="container">
         {% block content %}

@@ -57,7 +57,7 @@ li {
 }
 
 .lecture-feed-container, .test-feed-container {
-    overflow: hidden; /* Добавим overflow: hidden для родительского контейнера */
+    overflow: hidden;
 }
 
 .lecture-item, .test-item {

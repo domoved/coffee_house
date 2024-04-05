@@ -4,40 +4,34 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-6 offset-md-3">
-        <h2>Регистрация</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Имя пользователя:</label>
-                <input type="text" class="form-control" id="username" name="username">
-                {% if form.data.username|length == 0 %}
-                    <small class="text-danger">Поле обязательно для заполнения</small>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" name="email">
-                {% if form.data.email|length == 0 %}
-                    <small class="text-danger">Поле обязательно для заполнения</small>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <label for="password">Пароль:</label>
-                <input type="password" class="form-control" id="password" name="password">
-                {% if form.data.password|length == 0 %}
-                    <small class="text-danger">Поле обязательно для заполнения</small>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <label for="password_check">Повторите пароль:</label>
-                <input type="password" class="form-control" id="password_check" name="password_check">
-                {% if form.data.password|length == 0 and not form.data.password_check %}
-                    <small class="text-danger">Поле обязательно для заполнения</small>
-                {% endif %}
-            </div>
-            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
-        </form>
+    <div class="col-md-6 offset-md-3 text-center">
+        <div class="card p-5">
+            <h2 class="text-center mb-3">Регистрация</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% block form_fields %}
+                    {% for field in form.visible_fields %}
+                        <div class="form-group">
+                            <br>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                {% endblock %}
+            {% if form.errors %}
+                <div class="form-group">
+                    <small class="text-danger">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        {% endfor %}
+                    </small>
+                </div>
+                {% else %} <div class="form-group"> <br> </div>
+            {% endif %}
+                <button type="submit" class="btn btn-primary btn-lg text-center">Зарегистрироваться</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

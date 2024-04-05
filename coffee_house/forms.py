@@ -3,8 +3,10 @@ from django.contrib.auth.models import User
 
 
 class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
-    password_check = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
+    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Введите имя'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Введите email'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Введите пароль'}))
+    password_check = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Повторите пароль'}))
 
     class Meta:
         model = User
@@ -17,17 +19,7 @@ class UserRegistrationForm(forms.ModelForm):
         password = cleaned_data.get('password')
         password_check = cleaned_data.get('password_check')
 
-        if not username:
-            self.add_error('username', 'Пожалуйста, введите имя пользователя.')
-        if not email:
-            self.add_error('email', 'Пожалуйста, введите адрес электронной почты.')
-        if not password:
-            self.add_error('password', 'Пожалуйста, введите пароль.')
-        if not password_check:
-            self.add_error('password_check', 'Пожалуйста, введите пароль повторно.')
-
-        if password and password_check and password != password_check:
-            self.add_error('password', 'Пароли не совпадают.')
+        if password != password_check:
             self.add_error('password_check', 'Пароли не совпадают.')
 
         return cleaned_data
