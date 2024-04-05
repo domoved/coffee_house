@@ -11,22 +11,28 @@
             <div class="form-group">
                 <label for="username">Имя пользователя:</label>
                 <input type="text" class="form-control" id="username" name="username">
+                {% if form.data.username|length == 0 %}
+                    <small class="text-danger">Поле обязательно для заполнения</small>
+                {% endif %}
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" class="form-control" id="email" name="email">
+                {% if form.data.email|length == 0 %}
+                    <small class="text-danger">Поле обязательно для заполнения</small>
+                {% endif %}
             </div>
             <div class="form-group">
                 <label for="password">Пароль:</label>
                 <input type="password" class="form-control" id="password" name="password">
+                {% if form.data.password|length == 0 %}
+                    <small class="text-danger">Поле обязательно для заполнения</small>
+                {% endif %}
             </div>
             <div class="form-group">
                 <label for="password_check">Повторите пароль:</label>
                 <input type="password" class="form-control" id="password_check" name="password_check">
-                {% if form.errors.password_check %}
-                    <small class="text-danger">{{ form.errors.password_check }}</small>
-                {% endif %}
-                {% if form.data.password and not form.data.password_check %}
+                {% if form.data.password|length == 0 and not form.data.password_check %}
                     <small class="text-danger">Поле обязательно для заполнения</small>
                 {% endif %}
             </div>

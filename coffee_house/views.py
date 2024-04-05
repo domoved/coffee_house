@@ -28,5 +28,6 @@ def login_view(request):
     else:
         return render(request, 'login.html')
 
+
 def home(request):
     return render(request, 'base.html')
