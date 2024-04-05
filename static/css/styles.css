@@ -1,0 +1,76 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f1e5;
+    color: #423d35;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #000000;
+}
+
+p {
+    line-height: 1.6;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+.lecture-feed, .test-feed {
+    flex-wrap: nowrap;
+    display: flex;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.lecture-feed::-webkit-scrollbar,
+.test-feed::-webkit-scrollbar {
+    display: none;
+}
+
+.lecture-feed::-webkit-scrollbar-track,
+.test-feed::-webkit-scrollbar-track {
+    display: none;
+}
+
+.lecture-feed::-webkit-scrollbar-thumb,
+.test-feed::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+.lecture-feed-container:hover .lecture-feed, .test-feed-container:hover .test-feed {
+    overflow-x: scroll;
+}
+
+.lecture-feed-container, .test-feed-container {
+    overflow: hidden; /* Добавим overflow: hidden для родительского контейнера */
+}
+
+.lecture-item, .test-item {
+    flex: 1 0 auto;
+    min-width: 99%;
+    margin: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.lecture-item:hover, .test-item:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}

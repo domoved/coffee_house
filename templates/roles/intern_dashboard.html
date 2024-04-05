@@ -1,41 +1,53 @@
+{% load static %}
+{% include 'includes/../header.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Стажер</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Добро пожаловать, стажер!</h1>
-    <p>Доступный курс для тебя:</p> 
-    <ul>
-        {% for course in courses %}
-            <li>{{ course.title }}</li>
-            <h2>Доступные лекции:</h2>
-            <ul>
+    <div class="container">
+        <h1>Добро пожаловать, стажер!</h1>
+        <p>Доступный курс для тебя:</p>
+        <div class="course">
+            <h3>Доступные лекции:</h3>
+            <div class="lecture-feed">
                 {% for lecture in lectures %}
-                    <li>{{ lecture.title }}</li>
+                    <div class="lecture-item">
+                        <h4>{{ lecture.title }}</h4>
+                        {{ lecture.description }}
+                    </div>
                 {% empty %}
-                    <li>Нет доступных лекций</li>
+                    <p>Нет доступных лекций</p>
                 {% endfor %}
-            </ul>
-                
-            <h2>Доступные тесты:</h2>
-            <ul>
+            </div>
+            <h3>Доступные тесты:</h3>
+            <div class="test-feed">
                 {% for test in tests %}
-                    <li>{{ test.title }}</li>
+                    <div class="test-item">
+                        <h4>{{ test.title }}</h4>
+                        <p>{{ test.description }}</p>
+                    </div>
                 {% empty %}
-                    <li>Нет доступных тестов</li>
+                    <p>Нет доступных тестов</p>
                 {% endfor %}
-            </ul>
-        {% empty %}
-            <li>В настоящее время нет доступных курсов...</li>
-        {% endfor %}
-    </ul>
+            </div>
+        </div>
 
-    <h2>Информация о прогрессе обучения:</h2>
-    <!-- Здесь добавить соответствующие данные о прогрессе обучения стажера -->
+        <h2>Информация о прогрессе обучения:</h2>
+        <!-- Здесь добавить соответствующие данные о прогрессе обучения стажера -->
 
-    <a href="/profile">Мой профиль</a>
+        <a href="/profile" class="btn btn-primary">Мой профиль</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from employees.views import employee_list, intern_dashboard
+from . import views
 
 
 urlpatterns = [
@@ -24,5 +25,7 @@ urlpatterns = [
     path('', employee_list),
     path('employees/', include('employees.urls')),
     path('intern_dashboard/', intern_dashboard),
-    path('courses/', include('courses.urls'))
+    path('courses/', include('courses.urls')),
+    path('register/', views.register, name='register'),
+    path('login/', views.login_view, name='login'),
 ]
