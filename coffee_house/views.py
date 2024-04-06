@@ -1,28 +1,19 @@
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from django.urls import reverse
-from .forms import UserRegistrationForm
+
 from employees.models import UserProfile
-
-
-def get_dashboard_redirect_url(role):
-    role_map = {
-        'intern': 'intern_dashboard',
-        'barista': 'barista_dashboard',
-        'manager': 'manager_dashboard',
-        'supervisor': 'supervisor_dashboard',
-        'hr_manager': 'hr_manager_dashboard',
-    }
-    return role_map.get(role, 'home')
+from .forms import UserRegistrationForm
 
 
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            UserProfile.objects.create(user=user, role='intern')
             return redirect('login')
     else:
         form = UserRegistrationForm()
@@ -30,6 +21,14 @@ def register(request):
 
 
 def login_view(request):
+    role_dashboard_mapping = {
+        'intern': 'roles/intern_dashboard',
+        'barista': 'roles/barista_dashboard',
+        'manager': 'roles/manager_dashboard',
+        'supervisor': 'roles/supervisor_dashboard',
+        'hr_manager': 'roles/hr_manager_dashboard',
+    }
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -39,15 +38,16 @@ def login_view(request):
             try:
                 user_profile = UserProfile.objects.get(user=user)
                 role = user_profile.role
-                return redirect(get_dashboard_redirect_url(role))
+                dashboard_url = role_dashboard_mapping.get(role)
+                if dashboard_url:
+                    return redirect(dashboard_url)
+                else:
+                    messages.error(request, 'Неправильная роль пользователя')
             except UserProfile.DoesNotExist:
                 messages.error(request, 'Профиль пользователя не найден')
-                return redirect('home')
         else:
             messages.error(request, 'Неверное имя пользователя или пароль')
-            return redirect('login')
-    else:
-        return render(request, 'login.html')
+    return render(request, 'login.html')
 
 
 def home(request):

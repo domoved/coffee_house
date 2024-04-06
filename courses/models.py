@@ -1,10 +1,12 @@
 from django.db import models
-from employees.models import Role
+
+from employees.models import UserProfile
+
 
 class Course(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    role = models.ForeignKey(Role, default=1, on_delete=models.CASCADE)
+    role = models.ForeignKey(UserProfile, max_length=20, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
