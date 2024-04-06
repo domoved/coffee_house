@@ -1,7 +1,21 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from .forms import UserRegistrationForm
+from employees.models import UserProfile
+
+
+def get_dashboard_redirect_url(role):
+    role_map = {
+        'intern': 'intern_dashboard',
+        'barista': 'barista_dashboard',
+        'manager': 'manager_dashboard',
+        'supervisor': 'supervisor_dashboard',
+        'hr_manager': 'hr_manager_dashboard',
+    }
+    return role_map.get(role, 'home')
 
 
 def register(request):
@@ -22,9 +36,16 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')
+            try:
+                user_profile = UserProfile.objects.get(user=user)
+                role = user_profile.role
+                return redirect(get_dashboard_redirect_url(role))
+            except UserProfile.DoesNotExist:
+                messages.error(request, 'Профиль пользователя не найден')
+                return redirect('home')
         else:
-            return render(request, 'login.html', {'error': 'Неверное имя или пароль'})
+            messages.error(request, 'Неверное имя пользователя или пароль')
+            return redirect('login')
     else:
         return render(request, 'login.html')
 

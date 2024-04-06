@@ -28,7 +28,7 @@ class CourseMaterial(models.Model):
     material_link = models.URLField()
 
     def __str__(self):
-        return self.course
+        return self.course.title
 
 
 class CertificationProcess(models.Model):
@@ -47,4 +47,4 @@ class Grade(models.Model):
     grade = models.IntegerField()
 
     def __str__(self):
-        return self.grade
+        return str(self.grade)

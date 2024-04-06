@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
-from coffee_house.forms import UserRegistrationForm
-from .models import UserProfile
 from courses.models import Lecture, Test, Course
-from django.contrib.auth.forms import UserCreationForm
+from employees.models import UserProfile, Role
 
 
 def employee_list(request):
@@ -11,7 +9,8 @@ def employee_list(request):
 
 
 def intern_dashboard(request):
-    courses = Course.objects.filter(role='intern')
+    intern_role = Role.objects.get(role='intern')
+    courses = Course.objects.filter(role=intern_role)
     lectures = Lecture.objects.all()
     tests = Test.objects.all()
     return render(request, 'roles/intern_dashboard.html',
