@@ -6,7 +6,28 @@ from employees.models import UserProfile
 class Course(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    role = models.ForeignKey(UserProfile, max_length=20, on_delete=models.CASCADE)
+    ROLE_CHOICES = (
+        ('intern', 'Стажер'),
+        ('barista', 'Бариста'),
+        ('manager', 'Менеджер'),
+        ('supervisor', 'Управляющий'),
+        ('hr_manager', 'Менеджер по персоналу'),
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    video_url = models.URLField(blank=True)
+    site_url = models.URLField(blank=True)
+
+    def role_hierarchy(self):
+        if self.role == 'hr_manager':
+            return ['hr_manager']
+        elif self.role == 'supervisor':
+            return ['supervisor', 'hr_manager']
+        elif self.role == 'manager':
+            return ['manager', 'supervisor', 'hr_manager']
+        elif self.role == 'barista':
+            return ['barista', 'manager', 'supervisor', 'hr_manager']
+        elif self.role == 'intern':
+            return ['intern', 'barista', 'manager', 'supervisor', 'hr_manager']
 
     def __str__(self):
         return self.title

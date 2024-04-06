@@ -22,11 +22,11 @@ def register(request):
 
 def login_view(request):
     role_dashboard_mapping = {
-        'intern': 'roles/intern_dashboard',
-        'barista': 'roles/barista_dashboard',
-        'manager': 'roles/manager_dashboard',
-        'supervisor': 'roles/supervisor_dashboard',
-        'hr_manager': 'roles/hr_manager_dashboard',
+        'intern': 'intern_dashboard',
+        'barista': 'barista_dashboard',
+        'manager': 'manager_dashboard',
+        'supervisor': 'supervisor_dashboard',
+        'hr_manager': 'hr_manager_dashboard',
     }
 
     if request.method == 'POST':

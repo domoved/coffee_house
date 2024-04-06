@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Курсы</title>
+</head>
+<body>
+{% block content %}
+        <div class="container">
+        <h1>Список курсов</h1>
+        {% if user.is_authenticated %}
+            <ul>
+            {% for course in courses %}
+                    <li><h3>{{ course.title }}</h3>
+                        <p>{{ course.description }}</p>
+                        {% if course.video_url %}
+                            <p><a href="{{ course.video_url }}">Ссылка на видеохостинг</a></p>
+                        {% endif %}
+                        {% if course.site_url %}
+                            <p><a href="{{ course.site_url }}">Ссылка на сайт</a></p>
+                        {% endif %}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>Вы должны войти в систему, чтобы увидеть доступные курсы.</p>
+        {% endif %}
+    </div>
+{% endblock %}

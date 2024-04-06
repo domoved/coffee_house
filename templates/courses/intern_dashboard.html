@@ -1,16 +1,17 @@
+{% extends 'base.html' %}
 {% load static %}
-{% include 'includes/../header.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Стажер</title>
+    {% block title %}Стажер{% endblock %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+{% block content %}
     <div class="container">
         <h1>Добро пожаловать, стажер!</h1>
         <p>Доступный курс для тебя:</p>
@@ -51,3 +52,4 @@
     <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
+{% endblock %}
