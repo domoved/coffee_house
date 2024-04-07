@@ -1,5 +1,32 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.forms import inlineformset_factory
+
+from courses.models import Test, Question, Answer
+
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['answer_text', 'is_correct']
+        widgets = {
+            'answer_text': forms.TextInput(attrs={'class': 'form-control'}),
+            'is_correct': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }
+
+
+AnswerFormSet = inlineformset_factory(Question, Answer, form=AnswerForm, extra=1, can_delete=False)
+
+
+class TestForm(forms.ModelForm):
+    questions = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    answers = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Test
+        fields = ['title', 'course', 'questions', 'answers']
+        widgets = {'title': forms.TextInput(attrs={'class': 'form-control'}),
+                   'course': forms.Select(attrs={'class': 'form-control'})}
 
 
 class UserRegistrationForm(forms.ModelForm):

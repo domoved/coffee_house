@@ -4,7 +4,7 @@ from employees.models import UserProfile
 
 
 def role_list(request):
-    roles = UserProfile.role.objects.all()
+    roles = UserProfile.objects.all()
     return render(request, 'management/role_list.html', {'roles': roles})
 
 

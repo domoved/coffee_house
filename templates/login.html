@@ -30,9 +30,7 @@
                     {% if messages %}
                         <div class="form-group">
                             <small class="text-danger">
-                                {% for message in messages %}
-                                    {{ message }}
-                                {% endfor %}
+                                    {{ messages }}
                             </small>
                         </div>
                         {% else %} <div class="form-group"> <br> </div>

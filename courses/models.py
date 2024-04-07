@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils.text import slugify
 from unidecode import unidecode
@@ -12,6 +14,7 @@ class Course(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     video_url = models.URLField(blank=True)
     slug = models.SlugField(unique=True, max_length=100, default='')
+    users = models.ManyToManyField(UserProfile, through='LearningProgress')
 
     def role_hierarchy(self):
         roles = ['intern', 'barista', 'manager', 'supervisor', 'hr_manager']
@@ -38,20 +41,35 @@ class Lecture(models.Model):
 
 class Test(models.Model):
     title = models.CharField(max_length=100)
-    questions = models.TextField()
-    answers = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
 
 
+class Question(models.Model):
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    question_text = models.CharField(max_length=250)
+
+    def __str__(self):
+        return self.question_text
+
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer_text = models.CharField(max_length=250)
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.answer_text
+
+
 class LearningProgress(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    progress = models.IntegerField(default=0)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    completion_percentage = models.IntegerField(default=0)
+    start_date = models.DateTimeField(default=datetime.now)
+    end_date = models.DateTimeField(default=datetime.now)
     completed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -61,7 +79,7 @@ class LearningProgress(models.Model):
 class CourseMaterial(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     content = models.TextField()
-    material_link = models.URLField()
+    material_link = models.URLField(null=True, default='')
 
     def __str__(self):
         return self.course.title
@@ -69,6 +87,7 @@ class CourseMaterial(models.Model):
 
 class CertificationProcess(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     certification_passed = models.BooleanField()
     certification_result = models.CharField(max_length=100)
     certification_date = models.DateTimeField()

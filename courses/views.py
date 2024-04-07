@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
+from coffee_house.forms import TestForm
 from courses.models import Lecture, Test, Course
 from employees.models import UserProfile
+from .models import Question, Answer
 
 
 def get_available_courses(user_profile):
@@ -53,3 +55,26 @@ def course_list(request):
 def course_detail(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     return render(request, 'course_detail.html', {'course': course})
+
+
+@login_required
+def create_or_update_test(request, course_slug):
+    if request.user.userprofile.role != 'hr_manager':
+        return redirect('home')
+
+    course = Course.objects.get(slug=course_slug)
+    if request.method == 'POST':
+        form = TestForm(request.POST)
+        if form.is_valid():
+            test = form.save(commit=False)
+            test.course = course
+            test.save()
+            questions_data = form.cleaned_data.get('questions').split(',')
+            answers_data = form.cleaned_data.get('answers').split(',')
+            for i, question_text in enumerate(questions_data):
+                question = Question.objects.create(test=test, question_text=question_text)
+                Answer.objects.create(question=question, answer_text=answers_data[i])
+        return redirect('course_detail', course_slug=course_slug)
+    else:
+        form = TestForm()
+    return render(request, 'courses/create_or_update_test.html', {'form': form, 'course': course})
