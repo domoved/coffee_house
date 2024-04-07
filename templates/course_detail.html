@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+
+    {% if course.video_url %}
+    <p><a href="{{ course.video_url }}">Ссылка на видеохостинг</a></p>
+    {% endif %}
+
+    {% if course.site_url %}
+    <p><a href="{{ course.site_url }}">Ссылка на сайт</a></p>
+    {% endif %}
+
+    <h2>Лекции:</h2>
+    <ul>
+        {% for lecture in course.lecture_set.all %}
+        <li>{{ lecture.title }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Тесты:</h2>
+    <ul>
+        {% for test in course.test_set.all %}
+        <li>{{ test.title }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Прогресс обучения:</h2>
+    {% for progress in course.learningprogress_set.all %}
+    <p>{{ progress.user }} - {{ progress.progress }}%</p>
+    {% endfor %}
+</div>
+{% endblock %}

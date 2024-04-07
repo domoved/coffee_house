@@ -8,6 +8,9 @@
         <h1>Добро пожаловать, стажер!</h1>
         <p>Доступный курс для тебя:</p>
         <div class="course">
+            {% for course in courses %}
+                {{ course }}
+             {% endfor %}
             <h3>Доступные лекции:</h3>
             <div class="lecture-feed">
                 {% for lecture in lectures %}
