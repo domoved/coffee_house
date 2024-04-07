@@ -22,3 +22,16 @@ def intern_dashboard(request):
                       {'courses': courses, 'lectures': lectures, 'tests': tests})
     except UserProfile.DoesNotExist:
         return HttpResponse("Профиль стажера не найден")
+
+
+@login_required
+def hr_manager_dashboard(request):
+    try:
+        hr_manager_dashboard = UserProfile.objects.filter(role='hr_manager_dashboard')
+        courses = Course.objects.filter(role__in=hr_manager_dashboard)
+        lectures = Lecture.objects.all()
+        tests = Test.objects.all()
+        return render(request, 'courses/hr_manager_dashboard.html',
+                      {'courses': courses, 'lectures': lectures, 'tests': tests})
+    except UserProfile.DoesNotExist:
+        return HttpResponse("Профиль менеджера по персоналу не найден")

@@ -10,7 +10,7 @@ def course_list(request):
     courses = Course.objects.all()
     available_courses = []
     for course in courses:
-        if user_profile.role in course.role_hierarchy():
+        if course.role_hierarchy() in user_profile.role:
             available_courses.append(course)
     return render(request, 'courses/courses.html',
                   {'courses': available_courses, 'user_profile': user_profile})

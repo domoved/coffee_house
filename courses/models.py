@@ -17,18 +17,6 @@ class Course(models.Model):
     video_url = models.URLField(blank=True)
     site_url = models.URLField(blank=True)
 
-    def role_hierarchy(self):
-        if self.role == 'hr_manager':
-            return ['hr_manager']
-        elif self.role == 'supervisor':
-            return ['supervisor', 'hr_manager']
-        elif self.role == 'manager':
-            return ['manager', 'supervisor', 'hr_manager']
-        elif self.role == 'barista':
-            return ['barista', 'manager', 'supervisor', 'hr_manager']
-        elif self.role == 'intern':
-            return ['intern', 'barista', 'manager', 'supervisor', 'hr_manager']
-
     def __str__(self):
         return self.title
 
@@ -50,3 +38,44 @@ class Test(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class LearningProgress(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    progress = models.IntegerField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} - {self.course}"
+
+
+class CourseMaterial(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    content = models.TextField()
+    material_link = models.URLField()
+
+    def __str__(self):
+        return self.course.title
+
+
+class CertificationProcess(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    certification_passed = models.BooleanField()
+    certification_result = models.CharField(max_length=100)
+    certification_date = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.user} - {self.certification_result}"
+
+
+class Grade(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    grade = models.IntegerField()
+    date_assigned = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.course} - {self.grade}"
