@@ -12,21 +12,18 @@
     <p><a href="{{ course.video_url }}">Ссылка на видеохостинг</a></p>
     {% endif %}
 
-    {% if course.site_url %}
-    <p><a href="{{ course.site_url }}">Ссылка на сайт</a></p>
-    {% endif %}
-
-    <h2>Лекции:</h2>
+        <h2>Лекции:</h2>
     <ul>
         {% for lecture in course.lecture_set.all %}
-        <li>{{ lecture.title }}</li>
+        <li>{{ lecture.title }} <a href="{% url 'lecture_detail' course.course_slug lecture.lecture_slug %}" 
+                                   class="btn btn-primary">Перейти</a></li>
         {% endfor %}
     </ul>
-
     <h2>Тесты:</h2>
     <ul>
         {% for test in course.test_set.all %}
-        <li>{{ test.title }}</li>
+        <li>{{ test.title }} <a href="{% url 'test_detail' course.course_slug test.test_slug %}" 
+                                class="btn btn-primary">Перейти</a></li>
         {% endfor %}
     </ul>
 

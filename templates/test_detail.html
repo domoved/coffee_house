@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} {{ test.title }} {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ test.title }}</h1>
+    <form method="post" action="{% url 'submit_test' test.course.course_slug test.test_slug %}">
+        {% csrf_token %}
+        {% for question in test.question_set.all %}
+            <h3>{{ question.question_text }}</h3>
+            {% for answer in question.answer_set.all %}
+                <input type="radio" id="answer{{ answer.id }}" name="question{{ question.id }}" value="{{ answer.id }}">
+                <label for="answer{{ answer.id }}">{{ answer.answer_text }}</label><br>
+            {% endfor %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Отправить ответы</button>
+    </form>
+
+    {% if results %}
+        <h2>Результаты теста:</h2>
+        <ul>
+            {% for question, result in results.items %}
+                <li>{{ question.question_text }} - {% if result %}Правильно{% else %}Неправильно{% endif %}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

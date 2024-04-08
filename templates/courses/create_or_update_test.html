@@ -1,45 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Создание или изменение теста{% endblock %}
+{% block title %}
+    Создание или изменение теста
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <h1>Создание или изменение теста</h1>
-    <p>Курс: {{ course.title }}</p>
-    <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    
-    <div id="questions" data-prefix="{{ formset.prefix }}">
-        {{ formset.management_form }}
-        {% for form in formset %}
-            <div class="question-form">
-                {{ form.as_p }}
-                <h4>Ответы</h4>
-                {{ form.answer_set.management_form }}
-                <div id="answers-{{ forloop.counter0 }}">
-                    {% for answer_form in form.answer_set %}
-                        {{ answer_form.as_p }}
-                    {% endfor %}
-                </div>
-                    <div id="empty_answer_form" style="display: none;">
-                        <div class="answer-form">
-                            <input type="text" name="{{ formset.prefix }}-answer_set-__prefix__-answer_text" placeholder="Введите текст ответа">
-                            <input type="checkbox" name="{{ formset.prefix }}-answer_set-__prefix__-is_correct"> Правильный ответ
-                        </div>
-                    </div>
-            
-                <button type="button" class="btn btn-primary" onclick="addAnswer('{{ form.prefix }}')">Добавить ответ</button>
-            </div>
-        {% endfor %}
-    </div>
-
-    <button type="submit" class="btn btn-primary">Сохранить</button>
-</form>
+    <form id="test-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ test_form.as_p }}
+        <div id="question-section">
+            <button type="button" class="add-question-btn">Добавить вопрос</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
 </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/addquestion_script.js' %}"></script>
+<script src="{% static 'js/addquestion_script.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Личный кабинет
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Личный кабинет - {{ user_profile.user.username }}</h1>
+    <h2>Личная информация:</h2>
+    <p>Имя пользователя: {{ user_profile.user.username }}</p>
+    <p>Email: {{ user_profile.user.email }}</p>
+    <p>Роль: {{ user_profile.role }}</p>
+
+    {% if user_profile.role == 'intern' or  user_profile.role == 'barista'%}
+    <h2>Доступные мне курсы:</h2>
+    <ul>
+        {% for course in available_courses %}
+        <li>{{ course.title }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Мой прогресс по курсам:</h2>
+    <ul>
+        {% for prog in progress %}
+        <li>{{ prog.course.title }} - {{ prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if user_profile.role == 'manager' %}
+        <h2>Доступные мне курсы:</h2>
+    <ul>
+        {% for course in available_courses %}
+        <li>{{ course.title }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Мой прогресс по курсам:</h2>
+    <ul>
+        {% for prog in progress %}
+        <li>{{ prog.course.title }} - {{ prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+    <h2>Прогресс стажеров:</h2>
+    <ul>
+        {% for intern_prog in intern_progress %}
+        <li>{{ intern_prog.user.user.username }} - {{ intern_prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+    <h2>Прогресс бариста:</h2>
+    <ul>
+        {% for barista_prog in barista_progress %}
+        <li>{{ barista_prog.user.user.username }} - {{ barista_prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if user_profile.role == 'supervisor' %}
+        <h2>Доступные мне курсы:</h2>
+    <ul>
+        {% for course in available_courses %}
+        <li>{{ course.title }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Мой прогресс по курсам:</h2>
+    <ul>
+        {% for prog in progress %}
+        <li>{{ prog.course.title }} - {{ prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+    <h2>Прогресс стажеров:</h2>
+    <ul>
+        {% for intern_prog in intern_progress %}
+        <li>{{ intern_prog.user.user.username }} - {{ intern_prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+    <h2>Прогресс бариста:</h2>
+    <ul>
+        {% for barista_prog in barista_progress %}
+        <li>{{ barista_prog.user.user.username }} - {{ barista_prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+            <h2>Прогресс менеджеров:</h2>
+    <ul>
+        {% for manager_prog in manager_progress %}
+        <li>{{ manager_prog.user.user.username }} - {{ manager_prog.completion_percentage }}%</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}

@@ -27,13 +27,16 @@
                                    placeholder="Введите пароль"
                                    required>
                     </div>
-                    {% if messages %}
-                        <div class="form-group">
-                            <small class="text-danger">
-                                    {{ messages }}
-                            </small>
-                        </div>
-                        {% else %} <div class="form-group"> <br> </div>
+                                        {% if messages %}
+                        {% for message in messages %}
+                            <div class="form-group">
+                                <small class="text-danger">
+                                        {{ message }}
+                                </small>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="form-group"> <br> </div>
                     {% endif %}
                     <button type="submit" class="btn btn-primary">Войти</button>
                 </form>

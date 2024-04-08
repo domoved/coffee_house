@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Менеджер по персоналу{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Добро пожаловать, {{ role }}</h1>
+    <h2>Доступные курсы</h2>
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">{{ course.title }}</h3>
+                    <p class="card-text">{{ course.description }}</p>
+                    <a href="{% url 'course_detail' course.course_slug %}" class="btn btn-primary">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Нет доступных курсов</p>
+        {% endfor %}
+    </div>
+</div>
+</div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/scroll_script.js' %}"></script>
+{% endblock %}
