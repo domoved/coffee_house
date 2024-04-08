@@ -2,10 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
-from coffee_house.forms import TestForm
+from coffee_house.forms import TestForm, QuestionForm
 from courses.models import Lecture, Test, Course
 from employees.models import UserProfile
-from .models import Question, Answer
+from .models import Answer
 
 
 def get_available_courses(user_profile):
@@ -59,22 +59,32 @@ def course_detail(request, course_slug):
 
 @login_required
 def create_or_update_test(request, course_slug):
-    if request.user.userprofile.role != 'hr_manager':
-        return redirect('home')
-
     course = Course.objects.get(slug=course_slug)
+
     if request.method == 'POST':
-        form = TestForm(request.POST)
-        if form.is_valid():
-            test = form.save(commit=False)
+        test_form = TestForm(request.POST)
+        if test_form.is_valid():
+            test = test_form.save(commit=False)
             test.course = course
             test.save()
-            questions_data = form.cleaned_data.get('questions').split(',')
-            answers_data = form.cleaned_data.get('answers').split(',')
-            for i, question_text in enumerate(questions_data):
-                question = Question.objects.create(test=test, question_text=question_text)
-                Answer.objects.create(question=question, answer_text=answers_data[i])
-        return redirect('course_detail', course_slug=course_slug)
+            for key, value in request.POST.items():
+                if key.startswith('question_text'):
+                    question_form = QuestionForm({'question_text': value})
+                    if question_form.is_valid():
+                        question = question_form.save(commit=False)
+                        question.test = test
+                        question.save()
+                        answer_keys = [k for k in request.POST.keys() if
+                                       k.startswith(f'answer_text_{key.split("_")[2]}')]
+                        for answer_key in answer_keys:
+                            answer_text = request.POST.get(answer_key, '')
+                            is_correct_key = answer_key.replace('answer_text', 'is_correct')
+                            is_correct_values = request.POST.getlist(is_correct_key)
+                            is_correct = "True" in is_correct_values
+                            answer = Answer(answer_text=answer_text, is_correct=is_correct, question=question)
+                            answer.save()
+
+            return redirect('course_detail', course_slug=course_slug)
     else:
-        form = TestForm()
-    return render(request, 'courses/create_or_update_test.html', {'form': form, 'course': course})
+        test_form = TestForm()
+    return render(request, 'courses/create_or_update_test.html', {'test_form': test_form})

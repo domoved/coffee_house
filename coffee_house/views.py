@@ -5,6 +5,14 @@ from django.shortcuts import render, redirect
 from employees.models import UserProfile
 from .forms import UserRegistrationForm
 
+role_dashboard_mapping = {
+    'intern': 'intern_dashboard',
+    'barista': 'barista_dashboard',
+    'manager': 'manager_dashboard',
+    'supervisor': 'supervisor_dashboard',
+    'hr_manager': 'hr_manager_dashboard',
+}
+
 
 def register(request):
     if request.method == 'POST':
@@ -21,32 +29,30 @@ def register(request):
 
 
 def login_view(request):
-    role_dashboard_mapping = {
-        'intern': 'intern_dashboard',
-        'barista': 'barista_dashboard',
-        'manager': 'manager_dashboard',
-        'supervisor': 'supervisor_dashboard',
-        'hr_manager': 'hr_manager_dashboard',
-    }
-
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        if not UserProfile.objects.filter(user__username=username).exists():
+            messages.error(request, 'Пользователь с таким именем не найден')
+            return render(request, 'login.html')
+
         user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            try:
-                user_profile = UserProfile.objects.get(user=user)
-                role = user_profile.role
-                dashboard_url = role_dashboard_mapping.get(role)
-                if dashboard_url:
-                    return redirect(dashboard_url)
-                else:
-                    messages.error(request, 'Неправильная роль пользователя')
-            except UserProfile.DoesNotExist:
-                messages.error(request, 'Профиль пользователя не найден')
-        else:
-            messages.error(request, 'Неверное имя пользователя или пароль')
+        if user is None:
+            messages.error(request, 'Неправильный пароль')
+            return render(request, 'login.html')
+        login(request, user)
+
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+            role = user_profile.role
+            dashboard_url = role_dashboard_mapping.get(role)
+            if dashboard_url:
+                return redirect(dashboard_url)
+            else:
+                messages.error(request, 'Неправильная роль пользователя')
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'Профиль пользователя не найден')
+
     return render(request, 'login.html')
 
 

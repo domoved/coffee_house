@@ -11,8 +11,8 @@
         {% for course in courses %}
         <div class="col-md-4">
             <div class="card mb-4">
-            <a href="{% url 'course_detail' course.slug %}">{{ course.title }}
                 <div class="card-body">
+                    <a href="{% url 'course_detail' course.slug %}">{{ course.title }}
                     <h3 class="card-title"></h3>
                     <p class="card-text">{{ course.description }}</p>
                     {% if course.video_url %}
@@ -21,8 +21,8 @@
                     {% if course.site_url %}
                     <p><a href="{{ course.site_url }}">Ссылка на сайт</a></p>
                     {% endif %}
+                    </a>
                 </div>
-            </a>
             </div>
         </div>
         {% empty %}
@@ -30,7 +30,8 @@
         {% endfor %}
     </div>
     {% else %}
-    <p>Вы должны <a href="{% url 'login' %}">войти</a> или <a href="{% url 'register' %}">зарегистрироваться</a>, чтобы увидеть доступные курсы.</p>
+    <p>Вы должны <a href="{% url 'login' %}">войти</a> или 
+        <a href="{% url 'register' %}">зарегистрироваться</a>, чтобы увидеть доступные курсы.</p>
     {% endif %}
 </div>
 {% endblock %}

@@ -61,7 +61,7 @@ class Answer(models.Model):
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.answer_text
+        return f"{self.question} - {self.answer_text}"
 
 
 class LearningProgress(models.Model):
