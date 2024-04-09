@@ -52,25 +52,6 @@ def test_detail(request, course_slug, test_slug):
     answers_map = {answer.id: answer.is_correct for question in questions for answer in question.answer_set.all()}
     return render(request, 'test_detail.html', {'test': test, 'answers_map': answers_map})
 
-
-def submit_test(request, course_slug, test_slug):
-    if request.method == 'POST':
-        test = get_object_or_404(Test, course__course_slug=course_slug, test_slug=test_slug)
-        user_answers = {}
-        for key, value in request.POST.items():
-            if key.startswith('question'):
-                question_id = int(key.replace('question', ''))
-                user_answers[question_id] = int(value)
-
-        results = {}
-        for question in test.question_set.all():
-            correct_answer_id = question.answer_set.filter(is_correct=True).first().id
-            user_answer_id = user_answers.get(question.id)
-            results[question] = correct_answer_id == user_answer_id
-
-        return render(request, 'test_detail.html', {'test': test, 'results': results})
-
-
 @login_required
 def lecture_detail(request, course_slug, lecture_slug):
     lecture = get_object_or_404(Lecture, lecture_slug=lecture_slug)

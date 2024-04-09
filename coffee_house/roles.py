@@ -1,3 +1,5 @@
+ROLES = ['intern', 'barista', 'manager', 'supervisor', 'hr_manager']
+
 ROLE_CHOICES = (
     ('intern', 'Стажер'),
     ('barista', 'Бариста'),
@@ -12,4 +14,12 @@ ROLE_HIERARCHY = {
     'manager': ['manager', 'supervisor', 'hr_manager'],
     'supervisor': ['supervisor', 'hr_manager'],
     'hr_manager': ['hr_manager'],
+}
+
+ROLE_HIERARCHY_ACCESS = {
+    'intern': ['intern'],
+    'barista': ['barista'],
+    'manager': ['intern', 'barista'],
+    'supervisor': ['intern', 'barista', 'manager'],
+    'hr_manager': ['intern', 'barista', 'manager', 'supervisor', 'hr_manager'],
 }

@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.text import slugify
 from unidecode import unidecode
 
-from coffee_house.roles import ROLE_CHOICES, ROLE_HIERARCHY
+from coffee_house.roles import ROLE_CHOICES, ROLE_HIERARCHY, ROLE_HIERARCHY_ACCESS
 from employees.models import UserProfile
 
 
@@ -19,6 +19,10 @@ class Course(models.Model):
     @property
     def role_hierarchy(self):
         return ROLE_HIERARCHY[self.role]
+
+    @property
+    def role_hierarchy_access(self):
+        return ROLE_HIERARCHY_ACCESS[self.role]
 
     def save(self, *args, **kwargs):
         if not self.course_slug or self.course_slug != slugify(unidecode(self.title)):
@@ -76,8 +80,8 @@ class Answer(models.Model):
 
 
 class LearningProgress(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey('employees.UserProfile', on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
     completion_percentage = models.IntegerField(default=0)
     start_date = models.DateTimeField(default=datetime.now)
     end_date = models.DateTimeField(default=datetime.now)
@@ -89,7 +93,7 @@ class LearningProgress(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user} - {self.course}"
+        return f"{self.user}-{self.course}"
 
 
 class CourseMaterial(models.Model):
@@ -102,18 +106,19 @@ class CourseMaterial(models.Model):
 
 
 class CertificationProcess(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey('employees.UserProfile', on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE, null=True)
     certification_passed = models.BooleanField()
     certification_date = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.user} - {self.certification_passed}"
+        return f"{self.user}-{self.certification_passed}"
 
 
 class Grade(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey('employees.UserProfile', on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE, null=True)
     grade = models.IntegerField()
     date_assigned = models.DateTimeField(auto_now_add=True)
 
@@ -121,4 +126,4 @@ class Grade(models.Model):
         unique_together = ['user', 'course']
 
     def __str__(self):
-        return f"{self.user} - {self.course} - {self.grade}"
+        return f"{self.user}-{self.course}-{self.grade}"

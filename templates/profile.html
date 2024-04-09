@@ -12,9 +12,7 @@
     <p>Имя пользователя: {{ user_profile.user.username }}</p>
     <p>Email: {{ user_profile.user.email }}</p>
     <p>Роль: {{ user_profile.role }}</p>
-
-    {% if user_profile.role == 'intern' or  user_profile.role == 'barista'%}
-    <h2>Доступные мне курсы:</h2>
+    <h2>Доступные курсы:</h2>
     <ul>
         {% for course in available_courses %}
         <li>{{ course.title }}</li>
@@ -26,65 +24,120 @@
         <li>{{ prog.course.title }} - {{ prog.completion_percentage }}%</li>
         {% endfor %}
     </ul>
-    {% endif %}
 
-    {% if user_profile.role == 'manager' %}
-        <h2>Доступные мне курсы:</h2>
-    <ul>
-        {% for course in available_courses %}
-        <li>{{ course.title }}</li>
-        {% endfor %}
-    </ul>
-    <h2>Мой прогресс по курсам:</h2>
-    <ul>
-        {% for prog in progress %}
-        <li>{{ prog.course.title }} - {{ prog.completion_percentage }}%</li>
-        {% endfor %}
-    </ul>
+    {% if user_profile.role == 'manager' or user_profile.role ==  'supervisor' or user_profile.role ==  'hr_manager' %}
     <h2>Прогресс стажеров:</h2>
     <ul>
         {% for intern_prog in intern_progress %}
         <li>{{ intern_prog.user.user.username }} - {{ intern_prog.completion_percentage }}%</li>
+        {% if intern_prog.completion_percentage >= 100 %}
+        <form method="post" action="{% url 'upgrade_role' intern_prog.user.user.username %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Повысить роль</button>
+        </form>
+        {% endif %}
         {% endfor %}
     </ul>
     <h2>Прогресс бариста:</h2>
     <ul>
         {% for barista_prog in barista_progress %}
         <li>{{ barista_prog.user.user.username }} - {{ barista_prog.completion_percentage }}%</li>
+        {% if barista_prog.completion_percentage >= 100 %}
+        <form method="post" action="{% url 'upgrade_role' barista_prog.user.user.username %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Повысить роль</button>
+        </form>
+        {% endif %}
         {% endfor %}
     </ul>
     {% endif %}
-    {% if user_profile.role == 'supervisor' %}
-        <h2>Доступные мне курсы:</h2>
-    <ul>
-        {% for course in available_courses %}
-        <li>{{ course.title }}</li>
-        {% endfor %}
-    </ul>
-    <h2>Мой прогресс по курсам:</h2>
-    <ul>
-        {% for prog in progress %}
-        <li>{{ prog.course.title }} - {{ prog.completion_percentage }}%</li>
-        {% endfor %}
-    </ul>
-    <h2>Прогресс стажеров:</h2>
-    <ul>
-        {% for intern_prog in intern_progress %}
-        <li>{{ intern_prog.user.user.username }} - {{ intern_prog.completion_percentage }}%</li>
-        {% endfor %}
-    </ul>
-    <h2>Прогресс бариста:</h2>
-    <ul>
-        {% for barista_prog in barista_progress %}
-        <li>{{ barista_prog.user.user.username }} - {{ barista_prog.completion_percentage }}%</li>
-        {% endfor %}
-    </ul>
-            <h2>Прогресс менеджеров:</h2>
+
+    {% if user_profile.role == 'supervisor' or user_profile.role == 'hr_manager' %}
+    <h2>Прогресс менеджеров:</h2>
     <ul>
         {% for manager_prog in manager_progress %}
         <li>{{ manager_prog.user.user.username }} - {{ manager_prog.completion_percentage }}%</li>
+        {% if manager_prog.completion_percentage >= 100 %}
+        <form method="post" action="{% url 'upgrade_role' manager_prog.user.user.username %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Повысить роль</button>
+        </form>
+        {% endif %}
         {% endfor %}
     </ul>
     {% endif %}
+
+    {% if user_profile.role == 'hr_manager' %}
+    <h2>Прогресс управляющих:</h2>
+    <ul>
+        {% for supervisor_prog in supervisor_progress %}
+        <li>{{ supervisor_prog.user.user.username }} - {{ supervisor_prog.completion_percentage }}%</li>
+        {% if supervisor_prog.completion_percentage >= 100 %}
+        <form method="post" action="{% url 'upgrade_role' supervisor_prog.user.user.username %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Повысить роль</button>
+        </form>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    <h2>Добавить курс:</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="title">Название курса:</label>
+        <input type="text" name="title" id="title" required>
+        <br>
+        <label for="description">Описание курса:</label>
+        <textarea name="description" id="description" required></textarea>
+        <br>
+        <label for="role">Роль:</label>
+        <select name="role" id="role" required>
+            {% for role, role_display in course_form.fields.role.choices %}
+                <option value="{{ role }}">{{ role_display }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="video_url">URL видео:</label>
+        <input type="url" name="video_url" id="video_url" required>
+        <br>
+        <button type="submit" class="btn btn-primary" name="add_course">Добавить курс</button>
+    </form>
+    <h2>Добавить лекцию:</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="course_slug">Выберите курс:</label>
+        <select name="course_slug">
+            {% for course in available_courses %}
+            <option value="{{ course.course_slug }}">{{ course.title }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="title">Название лекции:</label>
+        <input type="text" name="title" id="title" required>
+        <br>
+        <label for="content">Содержание лекции:</label>
+        <textarea name="content" id="content" required></textarea>
+        <br>
+        <button type="submit" class="btn btn-primary" name="add_lecture">Добавить лекцию</button>
+    </form>
+    <h2>Добавить тест:</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="course_slug">Выберите курс:</label>
+        <select name="course_slug">
+            {% for course in available_courses %}
+            <option value="{{ course.course_slug }}">{{ course.title }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="title">Название лекции:</label>
+        <input type="text" name="title" id="title" required>
+        <br>
+        <label for="content">Содержание лекции:</label>
+        <textarea name="content" id="content" required></textarea>
+        <br>
+        <button type="submit" class="btn btn-primary" name="add_lecture">Добавить лекцию</button>
+    </form>
+    {% endif %}
 </div>
+<script src="{% static 'js/addquestion_script.js' %}"></script>
 {% endblock %}

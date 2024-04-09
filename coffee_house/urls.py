@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
 from . import views
@@ -12,4 +13,6 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('profile', profile, name='profile'),
     path('login/', login_view, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('upgrade_role/<str:username>/', views.upgrade_role, name='upgrade_role'),
 ]

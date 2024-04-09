@@ -2,46 +2,61 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+from coffee_house.roles import ROLE_CHOICES
 from courses.models import Lecture, Course
 from courses.models import Test, Question, Answer
 
 
 class LectureForm(forms.ModelForm):
+    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
+    course_slug = forms.CharField()
+
     class Meta:
         model = Lecture
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'course_slug']
 
 
 class CourseForm(forms.ModelForm):
+    title = forms.CharField(max_length=100)
+    description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
+    role = forms.ChoiceField(choices=ROLE_CHOICES)
+    video_url = forms.URLField()
+    course_slug = forms.CharField()
+
     class Meta:
         model = Course
-        fields = ['title', 'description', 'role', 'video_url']
+        fields = ['title', 'description', 'role', 'video_url', 'course_slug']
 
 
 class QuestionForm(forms.ModelForm):
+    question_text = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    test_slug = forms.CharField()
+
     class Meta:
         model = Question
-        fields = ['question_text']
-
-
-class QuestionForm(forms.ModelForm):
-    class Meta:
-        model = Question
-        fields = ['question_text']
+        fields = ['question_text', 'test_slug']
         labels = {'question_text': 'Текст вопроса'}
 
 
 class AnswerForm(forms.ModelForm):
+    answer_text = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    question_slug = forms.CharField()
+    is_correct = forms.BooleanField(required=False)
+
     class Meta:
         model = Answer
-        fields = ['answer_text', 'is_correct']
+        fields = ['answer_text', 'is_correct', 'question_slug']
         labels = {'answer_text': 'Текст ответа', 'is_correct': 'Правильный ответ'}
 
 
 class TestForm(forms.ModelForm):
+    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    course_slug = forms.CharField()
+
     class Meta:
         model = Test
-        fields = ['title']
+        fields = ['title', 'course_slug']
         labels = {'title': 'Название теста'}
 
 

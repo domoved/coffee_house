@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.text import slugify
+from unidecode import unidecode
 
-from courses.models import Course, LearningProgress, Test, Lecture
+from coffee_house import roles
+from courses.models import Course, LearningProgress
 from employees.models import UserProfile
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, LectureForm, CourseForm, QuestionForm, TestForm
 
 
 def register(request):
@@ -49,32 +52,88 @@ def login_view(request):
 @login_required
 def profile(request):
     user_profile = request.user.userprofile
-
-    intern_progress = LearningProgress.objects.filter(user__role='intern')
-    barista_progress = LearningProgress.objects.filter(user__role='barista')
-    manager_progress = LearningProgress.objects.filter(user__role='manager')
-    supervisor_progress = LearningProgress.objects.filter(user__role='supervisor')
-    available_courses = Course.objects.filter(role=user_profile.role)
+    available_courses = Course.objects.filter(role__in=roles.ROLE_HIERARCHY_ACCESS[user_profile.role])
     progress = LearningProgress.objects.filter(user=user_profile)
+    lecture_form = LectureForm()
+    test_form = TestForm()
+    course_form = CourseForm()
+    question_form = QuestionForm()
     context = {'user_profile': user_profile, 'available_courses': available_courses, 'progress': progress}
 
-    if user_profile.role == 'manager':
-        context['intern_progress'] = user_profile.role_hierarchy(user_profile.role)
+    if user_profile.role in ['manager', 'supervisor', 'hr_manager']:
+        intern_progress = LearningProgress.objects.filter(user__role='intern', course__role='intern')
+        barista_progress = LearningProgress.objects.filter(user__role='barista', course__role='barista')
         context['barista_progress'] = barista_progress
-
-    if user_profile.role == 'supervisor':
         context['intern_progress'] = intern_progress
-        context['barista_progress'] = barista_progress
+
+    if user_profile.role in ['supervisor', 'hr_manager']:
+        manager_progress = LearningProgress.objects.filter(user__role='manager', course__role='manager')
         context['manager_progress'] = manager_progress
 
     if user_profile.role == 'hr_manager':
-        other_users = UserProfile.objects.exclude(user=request.user)
-        courses = Course.objects.all()
-        tests = Test.objects.all()
-        lectures = Lecture.objects.all()
-        context.update({'other_users': other_users, 'courses': courses, 'tests': tests, 'lectures': lectures})
+        context['available_courses'] = Course.objects.all()
+        supervisor_progress = LearningProgress.objects.filter(user__role='supervisor', course__role='supervisor')
+        context['supervisor_progress'] = supervisor_progress
+
+        if request.method == 'POST':
+            if 'add_course' in request.POST:
+                course_form = CourseForm(request.POST)
+                if course_form.is_valid():
+                    title = course_form.cleaned_data['title']
+                    description = course_form.cleaned_data['description']
+                    role = course_form.cleaned_data['role']
+                    video_url = course_form.cleaned_data['video_url']
+                    course_slug = slugify(unidecode(title))
+                    course = Course(title=title, description=description, role=role,
+                                    video_url=video_url, course_slug=course_slug)
+                    course.save()
+                    messages.success(request, 'Курс успешно добавлен.')
+                    return redirect('profile')
+            elif 'add_lecture' in request.POST:
+                lecture_form = LectureForm(request.POST)
+                if lecture_form.is_valid():
+                    course_slug = request.POST.get('course_slug')
+                    course = get_object_or_404(Course, course_slug=course_slug)
+                    lecture = lecture_form.save(commit=False)
+                    lecture.course = course
+                    lecture.save()
+                    messages.success(request, 'Лекция успешно добавлена.')
+                    return redirect('profile')
+            elif 'add_test' in request.POST:
+                test_form = TestForm(request.POST)
+                if test_form.is_valid():
+                    course_slug = request.POST.get('course_slug')
+                    course = get_object_or_404(Course, course_slug=course_slug)
+                    test = test_form.save(commit=False)
+                    test.course = course
+                    test.save()
+                    messages.success(request, 'Тест успешно добавлен.')
+                    return redirect('profile')
+
+        context = {'user_profile': user_profile,
+                   'available_courses': available_courses,
+                   'progress': progress,
+                   'lecture_form': lecture_form,
+                   'test_form': test_form,
+                   'course_form': course_form,
+                   'question_form': question_form}
 
     return render(request, 'profile.html', context)
+
+
+def upgrade_role(request, username):
+    user = get_object_or_404(UserProfile, user__username=username)
+
+    if user.role == 'intern':
+        user.role = 'barista'
+    elif user.role == 'barista':
+        user.role = 'manager'
+    elif user.role == 'manager':
+        user.role = 'supervisor'
+    elif user.role == 'supervisor':
+        user.role = 'hr_manager'
+    user.save()
+    return redirect('profile')
 
 
 def home(request):
