@@ -2,13 +2,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.text import slugify
-from unidecode import unidecode
 
 from coffee_house import roles
-from courses.models import Course, LearningProgress
+from courses.models import Course, LearningProgress, Test, Question
 from employees.models import UserProfile
-from .forms import UserRegistrationForm, LectureForm, CourseForm, QuestionForm, TestForm
+from .forms import UserRegistrationForm, LectureForm, CourseForm, QuestionForm, TestForm, AnswerForm
 
 
 def register(request):
@@ -83,11 +81,9 @@ def profile(request):
                     description = course_form.cleaned_data['description']
                     role = course_form.cleaned_data['role']
                     video_url = course_form.cleaned_data['video_url']
-                    course_slug = slugify(unidecode(title))
                     course = Course(title=title, description=description, role=role,
-                                    video_url=video_url, course_slug=course_slug)
+                                    video_url=video_url)
                     course.save()
-                    messages.success(request, 'Курс успешно добавлен.')
                     return redirect('profile')
             elif 'add_lecture' in request.POST:
                 lecture_form = LectureForm(request.POST)
@@ -97,7 +93,6 @@ def profile(request):
                     lecture = lecture_form.save(commit=False)
                     lecture.course = course
                     lecture.save()
-                    messages.success(request, 'Лекция успешно добавлена.')
                     return redirect('profile')
             elif 'add_test' in request.POST:
                 test_form = TestForm(request.POST)
@@ -107,7 +102,20 @@ def profile(request):
                     test = test_form.save(commit=False)
                     test.course = course
                     test.save()
-                    messages.success(request, 'Тест успешно добавлен.')
+                    return redirect('profile')
+            elif 'add_question' in request.POST:
+                question_form = QuestionForm(request.POST)
+                if question_form.is_valid():
+                    question = question_form.save(commit=False)
+                    question.test = Test.objects.get(test_slug=request.POST.get('test_slug'))
+                    question.save()
+                    return redirect('profile')
+            elif 'add_answer' in request.POST:
+                answer_form = AnswerForm(request.POST)
+                if answer_form.is_valid():
+                    answer = answer_form.save(commit=False)
+                    answer.question = Question.objects.get(pk=request.POST.get('question_id'))
+                    answer.save()
                     return redirect('profile')
 
         context = {'user_profile': user_profile,
@@ -123,16 +131,7 @@ def profile(request):
 
 def upgrade_role(request, username):
     user = get_object_or_404(UserProfile, user__username=username)
-
-    if user.role == 'intern':
-        user.role = 'barista'
-    elif user.role == 'barista':
-        user.role = 'manager'
-    elif user.role == 'manager':
-        user.role = 'supervisor'
-    elif user.role == 'supervisor':
-        user.role = 'hr_manager'
-    user.save()
+    user.upgrade_role()
     return redirect('profile')
 
 

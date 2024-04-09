@@ -22,11 +22,10 @@ class CourseForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
     role = forms.ChoiceField(choices=ROLE_CHOICES)
     video_url = forms.URLField()
-    course_slug = forms.CharField()
 
     class Meta:
         model = Course
-        fields = ['title', 'description', 'role', 'video_url', 'course_slug']
+        fields = ['title', 'description', 'role', 'video_url']
 
 
 class QuestionForm(forms.ModelForm):
@@ -58,6 +57,9 @@ class TestForm(forms.ModelForm):
         model = Test
         fields = ['title', 'course_slug']
         labels = {'title': 'Название теста'}
+
+    def __init__(self, *args, **kwargs):
+        super(TestForm, self).__init__(*args, **kwargs)
 
 
 class UserRegistrationForm(forms.ModelForm):

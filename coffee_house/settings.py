@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'employees',
     'courses',
-    'management',
 ]
 
 LOGIN_REDIRECT_URL = 'home'

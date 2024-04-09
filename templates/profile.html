@@ -129,13 +129,12 @@
             {% endfor %}
         </select>
         <br>
-        <label for="title">Название лекции:</label>
+        <label for="title">Название теста:</label>
         <input type="text" name="title" id="title" required>
         <br>
-        <label for="content">Содержание лекции:</label>
-        <textarea name="content" id="content" required></textarea>
-        <br>
-        <button type="submit" class="btn btn-primary" name="add_lecture">Добавить лекцию</button>
+        <button class="btn btn-primary add-question-btn">Добавить вопрос</button>
+        <button class="btn btn-primary add-answer-btn">Добавить ответ</button>
+        <button type="submit" class="btn btn-primary" name="add_test">Добавить тест</button>
     </form>
     {% endif %}
 </div>

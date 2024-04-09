@@ -12,5 +12,26 @@ class UserProfile(models.Model):
     def role_hierarchy(self):
         return ROLE_HIERARCHY[self.role]
 
+    def upgrade_role(self):
+        if self.role == 'intern':
+            self.role = 'barista'
+        elif self.role == 'barista':
+            self.role = 'manager'
+        elif self.role == 'manager':
+            self.role = 'supervisor'
+        elif self.role == 'supervisor':
+            self.role = 'hr_manager'
+        self.save()
+
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.user.username}"
+
+
+class Document(models.Model):
+    title = models.CharField(max_length=100)
+    file = models.FileField(upload_to='documents/')
+    document_type = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
