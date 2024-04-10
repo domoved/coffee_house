@@ -23,6 +23,8 @@
         <ul>
             {% for question, result in results.items %}
                 <li>{{ question.question_text }} - {% if result %}Правильно{% else %}Неправильно{% endif %}</li>
+                {% if correct_answers == answers %}
+                {% endif %}
             {% endfor %}
         </ul>
     {% endif %}

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.db import models
+from django.db.models import Avg
 from django.utils.text import slugify
 from unidecode import unidecode
 
@@ -95,6 +96,26 @@ class LearningProgress(models.Model):
     def __str__(self):
         return f"{self.user}-{self.course}"
 
+    def calculate_completion_percentage(self):
+        tests = Test.objects.filter(course=self.course)
+        user_grades = Grade.objects.filter(user=self.user, test__in=tests)
+        if user_grades.exists():
+            average_grade = user_grades.aggregate(Avg('grade'))['grade__avg']
+        else:
+            average_grade = None
+        passing_grade = 76
+
+        if average_grade is not None:
+            self.completion_percentage = min(100, int(average_grade / passing_grade * 100))
+        else:
+            self.completion_percentage = 0
+
+        if self.completion_percentage >= 100:
+            self.completion_percentage = 100
+            self.is_complete = True
+
+        self.save()
+
 
 class CourseMaterial(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -117,13 +138,12 @@ class CertificationProcess(models.Model):
 
 class Grade(models.Model):
     user = models.ForeignKey('employees.UserProfile', on_delete=models.CASCADE)
-    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
     test = models.ForeignKey(Test, on_delete=models.CASCADE, null=True)
     grade = models.IntegerField()
     date_assigned = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ['user', 'course']
+        unique_together = ['user', 'test']
 
     def __str__(self):
-        return f"{self.user}-{self.course}-{self.grade}"
+        return f"{self.user}-{self.test}-{self.grade}"

@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from coffee_house import roles
 from courses.models import Course, LearningProgress, Test, Question
 from employees.models import UserProfile
-from .forms import UserRegistrationForm, LectureForm, CourseForm, QuestionForm, TestForm, AnswerForm
+from .forms import UserRegistrationForm, LectureForm, CourseForm, QuestionForm, TestForm, AnswerForm, DocumentForm
 
 
 def register(request):
@@ -52,6 +52,17 @@ def profile(request):
     user_profile = request.user.userprofile
     available_courses = Course.objects.filter(role__in=roles.ROLE_HIERARCHY_ACCESS[user_profile.role])
     progress = LearningProgress.objects.filter(user=user_profile)
+
+    if request.method == 'POST':
+        document_form = DocumentForm(request.POST, request.FILES)
+        if document_form.is_valid():
+            document = document_form.save(commit=False)
+            document.user = user_profile
+            document.save()
+            return redirect('profile')
+    else:
+        document_form = DocumentForm()
+
     lecture_form = LectureForm()
     test_form = TestForm()
     course_form = CourseForm()
@@ -95,14 +106,8 @@ def profile(request):
                     lecture.save()
                     return redirect('profile')
             elif 'add_test' in request.POST:
-                test_form = TestForm(request.POST)
-                if test_form.is_valid():
-                    course_slug = request.POST.get('course_slug')
-                    course = get_object_or_404(Course, course_slug=course_slug)
-                    test = test_form.save(commit=False)
-                    test.course = course
-                    test.save()
-                    return redirect('profile')
+                course_slug = request.POST.get('course_slug')
+                return redirect('create_test', course_slug=course_slug)
             elif 'add_question' in request.POST:
                 question_form = QuestionForm(request.POST)
                 if question_form.is_valid():
@@ -124,7 +129,12 @@ def profile(request):
                    'lecture_form': lecture_form,
                    'test_form': test_form,
                    'course_form': course_form,
-                   'question_form': question_form}
+                   'question_form': question_form,
+                   'document_form': document_form,
+                   'intern_progress': intern_progress,
+                   'barista_progress': barista_progress,
+                   'manager_progress': manager_progress,
+                   'supervisor_progress': supervisor_progress}
 
     return render(request, 'profile.html', context)
 
@@ -133,6 +143,20 @@ def upgrade_role(request, username):
     user = get_object_or_404(UserProfile, user__username=username)
     user.upgrade_role()
     return redirect('profile')
+
+
+@login_required
+def upload_document(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            document = form.save(commit=False)
+            document.user = request.user
+            document.save()
+            return redirect('profile')
+    else:
+        form = DocumentForm()
+    return render(request, 'upload_document.html', {'form': form})
 
 
 def home(request):

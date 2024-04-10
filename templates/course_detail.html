@@ -26,10 +26,5 @@
                                 class="btn btn-primary">Перейти</a></li>
         {% endfor %}
     </ul>
-
-    <h2>Прогресс обучения:</h2>
-    {% for progress in course.learningprogress_set.all %}
-    <p>{{ progress.user }} - {{ progress.completion_percentage }}%</p>
-    {% endfor %}
 </div>
 {% endblock %}

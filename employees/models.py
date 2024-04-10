@@ -29,9 +29,13 @@ class UserProfile(models.Model):
 
 class Document(models.Model):
     title = models.CharField(max_length=100)
-    file = models.FileField(upload_to='documents/')
-    document_type = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    document = models.FileField(upload_to='documents/')
+    document_type = models.CharField(max_length=100, default='')
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.document_type = 'txt'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

@@ -3,8 +3,17 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from coffee_house.roles import ROLE_CHOICES
-from courses.models import Lecture, Course
-from courses.models import Test, Question, Answer
+from courses.models import Test, Question, Answer, Lecture, Course
+from employees.models import Document
+
+
+class DocumentForm(forms.ModelForm):
+    document = forms.FileField(label='Выберите файл')
+    title = forms.CharField(label='Название документа', max_length=100)
+
+    class Meta:
+        model = Document
+        labels = {'title': 'Название документа', 'document': 'Выберите файл'}
 
 
 class LectureForm(forms.ModelForm):
@@ -26,40 +35,28 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ['title', 'description', 'role', 'video_url']
+        labels = {'title': 'Название', 'description': 'Описание', 'video_url': 'URL видео'}
 
 
 class QuestionForm(forms.ModelForm):
-    question_text = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    test_slug = forms.CharField()
-
     class Meta:
         model = Question
-        fields = ['question_text', 'test_slug']
+        fields = ['question_text']
         labels = {'question_text': 'Текст вопроса'}
 
 
 class AnswerForm(forms.ModelForm):
-    answer_text = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    question_slug = forms.CharField()
-    is_correct = forms.BooleanField(required=False)
-
     class Meta:
         model = Answer
-        fields = ['answer_text', 'is_correct', 'question_slug']
+        fields = ['answer_text', 'is_correct']
         labels = {'answer_text': 'Текст ответа', 'is_correct': 'Правильный ответ'}
 
 
 class TestForm(forms.ModelForm):
-    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    course_slug = forms.CharField()
-
     class Meta:
         model = Test
-        fields = ['title', 'course_slug']
+        fields = ['title']
         labels = {'title': 'Название теста'}
-
-    def __init__(self, *args, **kwargs):
-        super(TestForm, self).__init__(*args, **kwargs)
 
 
 class UserRegistrationForm(forms.ModelForm):
