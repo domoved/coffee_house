@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-(-0o5x7ut0l_m14m!8_29aw(e)^v^k(54yemvxt2$)9zpm8!di
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['dmitry.pythonanywhere.com']
+ALLOWED_HOSTS = ['dmitry.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -67,6 +67,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+
+            'libraries': {
+                'custom_tags': 'coffee_house.templatetags.custom_tags',
+            }
         },
     },
 ]

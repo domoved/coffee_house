@@ -7,15 +7,25 @@
 
 {% block content %}
 <div class="container">
-    <h1>Создание или изменение теста</h1>
-    <form id="test-form" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ test_form.as_p }}
-        <div id="question-section">
-            <button type="button" class="add-question-btn">Добавить вопрос</button>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Создание теста</h2>
+                    <form id="test-form" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ test_form.as_p }}
+                        </div>
+                        <div id="question-section" class="form-group">
+                            <button type="button" class="btn btn-primary add-question-btn mb-3">Добавить вопрос</button>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-0">Сохранить</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-    </form>
+    </div>
 </div>
 <script src="{% static 'js/addquestion_script.js' %}"></script>
 {% endblock %}

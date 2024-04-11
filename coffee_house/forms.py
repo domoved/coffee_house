@@ -13,6 +13,7 @@ class DocumentForm(forms.ModelForm):
 
     class Meta:
         model = Document
+        fields = ['title', 'document']
         labels = {'title': 'Название документа', 'document': 'Выберите файл'}
 
 

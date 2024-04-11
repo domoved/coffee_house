@@ -1,0 +1,23 @@
+{% load custom_tags %}
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Мой прогресс по курсам</h2>
+            <ul class="list-group">
+                {% for course in available_courses %}
+                    {% set_course_not_started course progress %}
+                    {% if not course_not_started %}
+                        {% for prog in progress %}
+                            {% if course.title == prog.course.title %}
+                                <li class="list-group-item">{{ prog.course.title }} - {{ prog.completion_percentage }}%</li>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">{{ course.title }} - Курс не начат</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

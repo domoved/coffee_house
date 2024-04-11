@@ -1,30 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ course.title }}{% endblock %}
+{% block title %}
+    {{ course.title }}
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>{{ course.title }}</h1>
-    <p>{{ course.description }}</p>
-
-    {% if course.video_url %}
-    <p><a href="{{ course.video_url }}">Ссылка на видеохостинг</a></p>
-    {% endif %}
-
-        <h2>Лекции:</h2>
-    <ul>
-        {% for lecture in course.lecture_set.all %}
-        <li>{{ lecture.title }} <a href="{% url 'lecture_detail' course.course_slug lecture.lecture_slug %}" 
-                                   class="btn btn-primary">Перейти</a></li>
-        {% endfor %}
-    </ul>
-    <h2>Тесты:</h2>
-    <ul>
-        {% for test in course.test_set.all %}
-        <li>{{ test.title }} <a href="{% url 'test_detail' course.course_slug test.test_slug %}" 
-                                class="btn btn-primary">Перейти</a></li>
-        {% endfor %}
-    </ul>
-</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto mt-4">
+                <h1 class="text-center">{{ course.title }}</h1>
+                <p class="text-center">{{ course.description }}</p>
+                <div class="text-center">
+                    {% if course.video_url %}
+                        <a href="{{ course.video_url }}" class="btn btn-primary">Введение в курс</a>
+                    {% endif %}
+                </div>
+                <div class="mt-4">
+                    <h2>Лекции:</h2>
+                    <ul class="list-group">
+                        {% for lecture in course.lecture_set.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ lecture.title }}
+                                 <a href="{% url 'lecture_detail' course.course_slug lecture.lecture_slug %}"
+                                   class="btn btn-primary">Перейти</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="mt-4">
+                    <h2>Тесты:</h2>
+                    <ul class="list-group">
+                        {% for test in course.test_set.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ test.title }}
+                                <a href="{% url 'test_detail' course.course_slug test.test_slug %}" class="btn btn-primary">Перейти</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

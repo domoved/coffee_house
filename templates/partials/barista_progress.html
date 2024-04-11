@@ -1,0 +1,20 @@
+<div class="col-md-12">
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">Прогресс бариста</h2>
+            <ul class="list-group">
+                {% for barista_prog in barista_progress %}
+                    <li class="list-group-item">
+                        {{ barista_prog.user.user.username }} - {{ barista_prog.completion_percentage }}%
+                    </li>
+                    {% if barista_prog.completion_percentage >= 100 %}
+                        <form method="post" action="{% url 'upgrade_role' barista_prog.user.user.username %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success mt-2">Повысить роль</button>
+                        </form>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="col-md-6 mb-4">
+    <div class="card h-100">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Добавить курс</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="title">Название курса:</label>
+                    <input type="text" class="form-control" name="title" id="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Описание курса:</label>
+                    <textarea class="form-control" name="description" id="description" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="role">Роль:</label>
+                    <select class="form-control" name="role" id="role" required>
+                        {% for role, role_display in course_form.fields.role.choices %}
+                            <option value="{{ role }}">{{ role_display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="video_url">URL видео:</label>
+                    <input type="url" class="form-control" name="video_url" id="video_url" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" name="add_course">Добавить курс</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

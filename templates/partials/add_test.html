@@ -1,0 +1,21 @@
+<div class="col-md-12 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Добавить тест</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="course_slug">Выберите курс:</label>
+                    <select class="form-control" name="course_slug" id="course_slug">
+                        {% for course in available_courses %}
+                        <option value="{{ course.course_slug }}">{{ course.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" name="add_test">Добавить тест</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

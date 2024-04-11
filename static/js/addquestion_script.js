@@ -18,8 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
         questionForm.innerHTML = `
             <label for="id_question_text_${questionCount}">Текст вопроса:</label>
             <input type="text" name="question_text_${questionCount}" id="id_question_text_${questionCount}">
-            <button type="button" class="add-answer-btn">Добавить ответ</button>
-            <div class="answers"></div>
+            <button type="button" class="btn btn-primary add-answer-btn">Добавить ответ</button>
+            <div class="answers mt-2"></div>
+            <br>
         `;
         questionSection.appendChild(questionForm);
         questionCount++;

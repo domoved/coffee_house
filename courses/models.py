@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django.db import models
 from django.db.models import Avg
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.text import slugify
 from unidecode import unidecode
 
@@ -25,6 +27,7 @@ class Course(models.Model):
     def role_hierarchy_access(self):
         return ROLE_HIERARCHY_ACCESS[self.role]
 
+
     def save(self, *args, **kwargs):
         if not self.course_slug or self.course_slug != slugify(unidecode(self.title)):
             self.course_slug = slugify(unidecode(self.title))
@@ -32,6 +35,14 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
+
+@receiver(post_save, sender=Course)
+def create_learning_progress(sender, instance, created, **kwargs):
+    if created:
+        users = instance.users.all()
+        for user in users:
+            LearningProgress.objects.create(user=user, course=instance)
 
 
 class Lecture(models.Model):
@@ -147,3 +158,12 @@ class Grade(models.Model):
 
     def __str__(self):
         return f"{self.user}-{self.test}-{self.grade}"
+
+
+@receiver(post_save, sender=Test)
+def initialize_grades(sender, instance, created, **kwargs):
+    if created:
+        course = instance.course
+        users = course.users.all()
+        for user in users:
+            Grade.objects.create(user=user, test=instance, grade=None)
