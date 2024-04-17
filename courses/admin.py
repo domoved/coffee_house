@@ -3,7 +3,7 @@ from django.utils.text import slugify
 from unidecode import unidecode
 
 from .models import (Course, Lecture, Test,
-                     LearningProgress, CourseMaterial, CertificationProcess, Grade, Question, Answer)
+                     LearningProgress, LectureMaterial, CertificationProcess, Grade, Question, Answer)
 
 
 class TestAdmin(admin.ModelAdmin):
@@ -46,7 +46,7 @@ admin.site.register(Course, CourseAdmin)
 admin.site.register(Lecture, LectureAdmin)
 admin.site.register(Test, TestAdmin)
 admin.site.register(LearningProgress)
-admin.site.register(CourseMaterial)
+admin.site.register(LectureMaterial)
 admin.site.register(CertificationProcess)
 admin.site.register(Grade)
 admin.site.register(Question)

@@ -28,27 +28,33 @@ def create_or_update_test(request, course_slug):
             test = test_form.save(commit=False)
             test.course = course
             test.save()
-            for key, value in request.POST.items():
-                if key.startswith('question_text'):
-                    question_form = QuestionForm({'question_text': value})
-                    if question_form.is_valid():
-                        question = question_form.save(commit=False)
-                        question.test = test
-                        question.save()
-                        answer_keys = [k for k in request.POST.keys() if
-                                       k.startswith(f'answer_text_{key.split("_")[2]}')]
-                        for answer_key in answer_keys:
-                            answer_text = request.POST.get(answer_key, '')
-                            is_correct_key = answer_key.replace('answer_text', 'is_correct')
-                            is_correct_values = request.POST.getlist(is_correct_key)
-                            is_correct = "on" in is_correct_values
-                            answer = Answer(answer_text=answer_text, is_correct=is_correct, question=question)
-                            answer.save()
-
+            save_questions_and_answers(request, test)
             return redirect('course_detail', course_slug=course_slug)
     else:
         test_form = TestForm()
     return render(request, 'courses/create_or_update_test.html', {'test_form': test_form})
+
+
+def save_questions_and_answers(request, test):
+    for key, value in request.POST.items():
+        if key.startswith('question_text'):
+            question_form = QuestionForm({'question_text': value})
+            if question_form.is_valid():
+                question = question_form.save(commit=False)
+                question.test = test
+                question.save()
+                save_answers(request, key, question)
+
+
+def save_answers(request, question_key, question):
+    answer_keys = [k for k in request.POST.keys() if k.startswith(f'answer_text_{question_key.split("_")[2]}')]
+    for answer_key in answer_keys:
+        answer_text = request.POST.get(answer_key, '')
+        is_correct_key = answer_key.replace('answer_text', 'is_correct')
+        is_correct_values = request.POST.getlist(is_correct_key)
+        is_correct = "on" in is_correct_values
+        answer = Answer(answer_text=answer_text, is_correct=is_correct, question=question)
+        answer.save()
 
 
 @login_required

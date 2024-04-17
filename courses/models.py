@@ -128,7 +128,7 @@ class LearningProgress(models.Model):
         self.save()
 
 
-class CourseMaterial(models.Model):
+class LectureMaterial(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     content = models.TextField()
     material_link = models.URLField(null=True, default='')

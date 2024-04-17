@@ -4,7 +4,9 @@
             <h2 class="card-title">Прогресс менеджеров</h2>
             <ul class="list-group">
                 {% for manager_prog in manager_progress %}
-                    <li class="list-group-item">{{ manager_prog.user.user.username }} - {{ manager_prog.completion_percentage }}%</li>
+                    <li class="list-group-item">
+                        {{ manager_prog.user.user.username }} - {{ manager_prog.completion_percentage }}%
+                    </li>
                     {% if manager_prog.completion_percentage >= 100 %}
                         <form method="post" action="{% url 'upgrade_role' manager_prog.user.user.username %}">
                             {% csrf_token %}
